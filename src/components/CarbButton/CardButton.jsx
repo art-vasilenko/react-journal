@@ -1,8 +1,9 @@
 import './CardButton.sass'
 
-export const CardButton = ({ children }) => {
+export const CardButton = ({ children, className }) => {
+  const cl = 'card-button' + (className? ' '+className: '')
   return (
-    <div className="card-button">
+    <div className={cl}>
       {children}
     </div>
   )

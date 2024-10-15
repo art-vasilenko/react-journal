@@ -1,7 +1,11 @@
 import './App.sass'
-import { Button } from './components/button/Button'
 import { CardButton } from './components/CarbButton/CardButton'
-import { Journalcard } from './components/Journalcard/Journalcard'
+import { Header } from './components/Header/Header'
+import { JournalAddButton } from './components/JournalAddButton/JournalAddButton'
+import { Journalcard } from './components/JournalCard/Journalcard'
+import { JounalList } from './components/JournalList/JounalList'
+import { Body } from './layots/Body/Body'
+import { LeftPanel } from './layots/LeftPanel/LeftPanel'
 
  export function App() {
   const data = [
@@ -17,23 +21,38 @@ import { Journalcard } from './components/Journalcard/Journalcard'
     }
   ]
   return (
-    <>
-     <Button/> 
-     <CardButton>
-        <Journalcard
-            title={data[0].title}
-            date={data[0].date}
-            text={data[0].text}
-        />
-      </CardButton>
-      <CardButton>
-        <Journalcard
-            title={data[1].title}
-            date={data[1].date}
-            text={data[1].text}
-        />
-      </CardButton>
-    </>
+    <div className='app'>
+    <LeftPanel>
+      <Header/>
+      <JournalAddButton/>
+      <JounalList>
+        <CardButton>
+          <Journalcard
+              title={data[0].title}
+              date={data[0].date}
+              text={data[0].text}
+          />
+        </CardButton>
+        <CardButton>
+          <Journalcard
+              title={data[1].title}
+              date={data[1].date}
+              text={data[1].text}
+          />
+        </CardButton>
+        <CardButton>
+          <Journalcard
+              title={data[1].title}
+              date={data[1].date}
+              text={data[1].text}
+          />
+        </CardButton>
+      </JounalList>
+    </LeftPanel>
+    <Body>
+        Body
+    </Body>
+    </div>
   )
 }
 
