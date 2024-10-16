@@ -1,6 +1,6 @@
-import "./Journalcard.sass"
+import "./JournalCard.sass"
 
-export const Journalcard = ({ title, date, text}) => {
+export const JournalCard = ({ title, date, text}) => {
    const formatedDate = new Intl.DateTimeFormat('ru-RU').format(date)
   return (
     <>

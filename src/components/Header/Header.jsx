@@ -2,6 +2,8 @@ import "./Header.sass"
 
 export const Header = () => {
   return (
-    <>logo</>
+    <div className="header">
+        Personal Journal
+    </div>
   )
 }
