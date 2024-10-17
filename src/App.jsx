@@ -11,18 +11,18 @@ import { LeftPanel } from './layots/LeftPanel/LeftPanel'
 
  export function App() {
   const initialData = [
-    {
-      id: 1,
-      title: 'Поход в горы',
-      date: new Date,
-      text: 'Поход в горы увлекательное занятие',
-    },
-    {
-      id: 2,
-      title: 'Поход в годы',
-      date: new Date,
-      text: 'Поход в годы занимает много времени',
-    },
+    // {
+    //   id: 1,
+    //   title: 'Поход в горы',
+    //   date: new Date,
+    //   text: 'Поход в горы увлекательное занятие',
+    // },
+    // {
+    //   id: 2,
+    //   title: 'Поход в годы',
+    //   date: new Date,
+    //   text: 'Поход в годы занимает много времени',
+    // },
   ]
   const [data, setData] = useState(initialData)
 
@@ -45,7 +45,9 @@ import { LeftPanel } from './layots/LeftPanel/LeftPanel'
       <Header/>
       <JournalAddButton/>
       <JounalList>
-        {data.sort(sortItems).map(el => (
+        {data.length === 0 
+          ? <p>Записей нет, добавьте новую!</p> 
+          : data.sort(sortItems).map(el => (
           <CardButton key={el.id}>
             <JournalCard
                 title={el.title}

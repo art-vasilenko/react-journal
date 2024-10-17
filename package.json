@@ -25,5 +25,9 @@
     "globals": "^15.9.0",
     "sass": "^1.79.5",
     "vite": "^5.4.8"
-  }
+  },
+  "description": "",
+  "main": "eslint.config.js",
+  "author": "",
+  "license": "ISC"
 }

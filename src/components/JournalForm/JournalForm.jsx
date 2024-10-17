@@ -1,6 +1,5 @@
 import { Button } from "../button/Button"
 
-
 export const JournalForm = ({onSubmit}) => {
     const addJournalItem = (e) => {
         e.preventDefault()
