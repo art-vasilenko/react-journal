@@ -10,20 +10,7 @@ import { Body } from './layots/Body/Body'
 import { LeftPanel } from './layots/LeftPanel/LeftPanel'
 
  export function App() {
-  const initialData = [
-    // {
-    //   id: 1,
-    //   title: 'Поход в горы',
-    //   date: new Date,
-    //   text: 'Поход в горы увлекательное занятие',
-    // },
-    // {
-    //   id: 2,
-    //   title: 'Поход в годы',
-    //   date: new Date,
-    //   text: 'Поход в годы занимает много времени',
-    // },
-  ]
+  const initialData = []
   const [data, setData] = useState(initialData)
 
   const addItems = items => {
@@ -31,7 +18,7 @@ import { LeftPanel } from './layots/LeftPanel/LeftPanel'
       title: items.title,
       text: items.text,
       date: new Date(items.date),
-      id: Math.max(...oldItems.map(el => el.id)) + 1
+      id: oldItems.length > 0 ? Math.max(...oldItems.map(el => el.id)) + 1 : 1
     }])
   }
 
