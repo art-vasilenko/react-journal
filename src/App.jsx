@@ -16,7 +16,7 @@ import { LeftPanel } from './layots/LeftPanel/LeftPanel'
   const addItems = items => {
     setData(oldItems => [...oldItems, {
       title: items.title,
-      text: items.text,
+      text: items.post,
       date: new Date(items.date),
       id: oldItems.length > 0 ? Math.max(...oldItems.map(el => el.id)) + 1 : 1
     }])

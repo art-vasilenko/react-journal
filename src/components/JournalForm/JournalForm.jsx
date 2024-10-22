@@ -1,5 +1,7 @@
 import { useState } from "react"
 import { Button } from "../button/Button"
+import './JournalForm.sass'
+import cn from 'classnames'
 
 export const JournalForm = ({onSubmit}) => {
     const [validateForm, setValidateForm] = useState({
@@ -13,6 +15,7 @@ export const JournalForm = ({onSubmit}) => {
         e.preventDefault()
         const formData = new FormData(e.target)
         const formProps = Object.fromEntries(formData)
+        console.log(formProps)
         if(!formProps.title.trim().length){
             setValidateForm(state => ({...state, title: false}))
             isValidate = false;
@@ -39,10 +42,30 @@ export const JournalForm = ({onSubmit}) => {
     
   return (
         <form className="journal-form" onSubmit={addJournalItem}>
-            <input type="text" name="title" style={{  border: validateForm.title === true ? undefined : '1px solid red' }}/>
-            <input type="date" name="date" style={{  border: validateForm.date === true ? undefined : '1px solid red' }} />
-            <input type="text" name="tag"/>
-            <textarea name="post" cols='30' rows='10' style={{  border: validateForm.post === true ? undefined : '1px solid red' }}></textarea>
+            <div>
+                <input type="text" name="title" className={cn('input-title', {
+                    invalid: !validateForm.title
+                })}/>
+            </div>
+            <div className="form-row">
+                <label htmlFor="date" className='form-label'>
+                    <img src="/calendar.svg" alt="Иконка календаря"/>
+                    <span>Дата</span>
+                </label>
+                <input type="date" name="date" id="date" className={cn('input', {
+                    invalid: !validateForm.date
+                })}/>
+            </div>
+            <div className="form-row">
+            <label htmlFor="tag" className='form-label'>
+                    <img src="/folder.svg" alt="Иконка меток"/>
+                    <span>Метки</span>
+                </label>
+                <input type="text" id="tag" name="tag" className='input'/>
+            </div>
+            <textarea name="post" cols='30' rows='10' className={cn('input input_post', {
+                invalid: !validateForm.post
+            })}></textarea>
             <Button text='Сохранить' onClick={() => {
                 console.log('Click')
             }}/>
