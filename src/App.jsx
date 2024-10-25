@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import './App.sass'
 import { CardButton } from './components/CarbButton/CardButton'
 import { Header } from './components/Header/Header'
@@ -10,8 +10,24 @@ import { Body } from './layots/Body/Body'
 import { LeftPanel } from './layots/LeftPanel/LeftPanel'
 
  export function App() {
-  const initialData = []
-  const [data, setData] = useState(initialData)
+  const [data, setData] = useState([])
+  //Вывод из LocalStorage
+  useEffect(() => {
+    const localStorageData = JSON.parse(localStorage.getItem('data'))
+      if(localStorageData) {
+        setData(localStorageData.map(item => ({
+          ...item,
+          date: new Date(item.date) 
+        })))
+      }
+  }, [])
+
+  // Запись в LocalStorage
+  useEffect(() => {
+    if(data.length){
+      localStorage.setItem('data', JSON.stringify(data))
+    }
+  }, [data])
 
   const addItems = items => {
     setData(oldItems => [...oldItems, {
@@ -28,26 +44,26 @@ import { LeftPanel } from './layots/LeftPanel/LeftPanel'
 
   return (
     <div className='app'>
-    <LeftPanel>
-      <Header/>
-      <JournalAddButton/>
-      <JounalList>
-        {data.length === 0 
-          ? <p>Записей нет, добавьте новую!</p> 
-          : data.sort(sortItems).map(el => (
-          <CardButton key={el.id}>
-            <JournalCard
-                title={el.title}
-                date={el.date}
-                text={el.text}
-            />
-        </CardButton>
-        ))}
-      </JounalList>
-    </LeftPanel>
-    <Body>
-        <JournalForm onSubmit={addItems}/>
-    </Body>
+      <LeftPanel>
+        <Header/>
+        <JournalAddButton/>
+        <JounalList>
+          {data.length === 0 
+            ? <p>Записей нет, добавьте новую!</p> 
+            : data.sort(sortItems).map(el => (
+            <CardButton key={el.id}>
+              <JournalCard
+                  title={el.title}
+                  date={el.date}
+                  text={el.text}
+              />
+          </CardButton>
+          ))}
+        </JounalList>
+      </LeftPanel>
+      <Body>
+          <JournalForm onSubmit={addItems}/>
+      </Body>
     </div>
   )
 }

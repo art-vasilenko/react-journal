@@ -15,7 +15,6 @@ export const JournalForm = ({onSubmit}) => {
         e.preventDefault()
         const formData = new FormData(e.target)
         const formProps = Object.fromEntries(formData)
-        console.log(formProps)
         if(!formProps.title.trim().length){
             setValidateForm(state => ({...state, title: false}))
             isValidate = false;
@@ -57,7 +56,7 @@ export const JournalForm = ({onSubmit}) => {
                 })}/>
             </div>
             <div className="form-row">
-            <label htmlFor="tag" className='form-label'>
+                <label htmlFor="tag" className='form-label'>
                     <img src="/folder.svg" alt="Иконка меток"/>
                     <span>Метки</span>
                 </label>
