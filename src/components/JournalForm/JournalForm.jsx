@@ -1,14 +1,28 @@
-import { useState } from "react"
+import { useEffect, useState} from "react"
 import { Button } from "../button/Button"
 import './JournalForm.sass'
 import cn from 'classnames'
 
 export const JournalForm = ({onSubmit}) => {
-    const [validateForm, setValidateForm] = useState({
+    const INITIAL_STATE = {
         title: true, 
         date: true,
         post: true,
-    })
+    }
+    const [validateForm, setValidateForm] = useState(INITIAL_STATE)
+
+    useEffect(() => {
+        let timerId;
+        if(!validateForm.date || !validateForm.title || !validateForm.post) {
+           timerId = setTimeout(() => {
+                console.log('Очистка состояния')
+                setValidateForm(INITIAL_STATE)
+            }, 2000);
+        }
+        return () => {
+            clearTimeout(timerId)
+        }
+    }, [validateForm])
 
     const addJournalItem = (e) => {
         let isValidate = true;
