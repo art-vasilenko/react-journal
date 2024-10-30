@@ -1,63 +1,47 @@
-import { useEffect, useState} from "react"
+import { useEffect, useReducer} from "react"
 import { Button } from "../button/Button"
 import './JournalForm.sass'
 import cn from 'classnames'
+import { formReducer, INITIAL_STATE } from "./JournalForm.state"
 
 export const JournalForm = ({onSubmit}) => {
-    const INITIAL_STATE = {
-        title: true, 
-        date: true,
-        post: true,
-    }
-    const [validateForm, setValidateForm] = useState(INITIAL_STATE)
-
+    const [formState, dispatchForm] = useReducer(formReducer, INITIAL_STATE)
+    
+    const { isValid, isFormReadyOnSubmit, values } = formState
     useEffect(() => {
         let timerId;
-        if(!validateForm.date || !validateForm.title || !validateForm.post) {
+        if(!formState.isValid.date || !formState.isValid.title || !formState.isValid.post) {
            timerId = setTimeout(() => {
-                console.log('Очистка состояния')
-                setValidateForm(INITIAL_STATE)
+                dispatchForm({type: 'RESET_VALIDITY'})
             }, 2000);
         }
         return () => {
             clearTimeout(timerId)
         }
-    }, [validateForm])
+    }, [isValid])
+
+    useEffect(() => {
+        if(isFormReadyOnSubmit) {
+            onSubmit(values)
+            dispatchForm({type: 'CLEAR'})
+        }
+    }, [isFormReadyOnSubmit])
 
     const addJournalItem = (e) => {
-        let isValidate = true;
         e.preventDefault()
-        const formData = new FormData(e.target)
-        const formProps = Object.fromEntries(formData)
-        if(!formProps.title.trim().length){
-            setValidateForm(state => ({...state, title: false}))
-            isValidate = false;
-        } else {
-            setValidateForm(state => ({...state, title: true}))
-        }
-        if(!formProps.date.trim().length){
-            setValidateForm(state => ({...state, date: false}))
-            isValidate = false;
-        } else {
-            setValidateForm(state => ({...state, date: true}))
-        }
-        if(!formProps.post.trim().length){
-            setValidateForm(state => ({...state, post: false}))
-            isValidate = false;
-        } else {
-            setValidateForm(state => ({...state, post: true}))
-        }
-        if(!isValidate){
-            return 0;
-        }
-        onSubmit(formProps)
+        dispatchForm({type: 'SUBMIT'})
 }
+
+    const onChange = (e) => {
+        console.log(e.target)
+        dispatchForm({type: 'SET_VALUE', payload: {[e.target.name]: e.target.value}})
+    }
     
   return (
         <form className="journal-form" onSubmit={addJournalItem}>
             <div>
-                <input type="text" name="title" className={cn('input-title', {
-                    invalid: !validateForm.title
+                <input type="text" onChange={onChange} value={values.title} name="title" className={cn('input-title', {
+                    invalid: !isValid.title
                 })}/>
             </div>
             <div className="form-row">
@@ -65,8 +49,8 @@ export const JournalForm = ({onSubmit}) => {
                     <img src="/calendar.svg" alt="Иконка календаря"/>
                     <span>Дата</span>
                 </label>
-                <input type="date" name="date" id="date" className={cn('input', {
-                    invalid: !validateForm.date
+                <input type="date" onChange={onChange} value={values.date} name="date" id="date" className={cn('input', {
+                    invalid: !isValid.date
                 })}/>
             </div>
             <div className="form-row">
@@ -74,10 +58,10 @@ export const JournalForm = ({onSubmit}) => {
                     <img src="/folder.svg" alt="Иконка меток"/>
                     <span>Метки</span>
                 </label>
-                <input type="text" id="tag" name="tag" className='input'/>
+                <input type="text" onChange={onChange} id="tag" value={values.tag} name="tag" className='input'/>
             </div>
-            <textarea name="post" cols='30' rows='10' className={cn('input input_post', {
-                invalid: !validateForm.post
+            <textarea name="post" onChange={onChange} value={values.post} cols='30' rows='10' className={cn('input input_post', {
+                invalid: !isValid.post
             })}></textarea>
             <Button text='Сохранить' onClick={() => {
                 console.log('Click')
