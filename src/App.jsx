@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+
 import './App.sass'
 import { CardButton } from './components/CarbButton/CardButton'
 import { Header } from './components/Header/Header'
@@ -8,33 +8,27 @@ import { JournalForm } from './components/JournalForm/JournalForm'
 import { JounalList } from './components/JournalList/JounalList'
 import { Body } from './layots/Body/Body'
 import { LeftPanel } from './layots/LeftPanel/LeftPanel'
+import { useLocalStorage } from './hooks/use-localstorage.hook'
+
+function mapItems(items) {
+  if(!items) {
+    return []
+  }
+  return items.map(i => ({
+    ...i,
+    date: new Date(i.date)
+  }))
+}
 
  export function App() {
-  const [data, setData] = useState([])
-  //Вывод из LocalStorage
-  useEffect(() => {
-    const localStorageData = JSON.parse(localStorage.getItem('data'))
-      if(localStorageData) {
-        setData(localStorageData.map(item => ({
-          ...item,
-          date: new Date(item.date) 
-        })))
-      }
-  }, [])
-
-  // Запись в LocalStorage
-  useEffect(() => {
-    if(data.length){
-      localStorage.setItem('data', JSON.stringify(data))
-    }
-  }, [data])
-
-  const addItems = items => {
-    setData(oldItems => [...oldItems, {
-      title: items.title,
-      text: items.post,
-      date: new Date(items.date),
-      id: oldItems.length > 0 ? Math.max(...oldItems.map(el => el.id)) + 1 : 1
+  const [items, setItems] = useLocalStorage('data')
+  
+  const addItem = item => {
+    setItems([...mapItems(items), {
+      title: item.title,
+      text: item.post,
+      date: new Date(item.date),
+      id: mapItems(items).length > 0 ? Math.max(...mapItems(items).map(el => el.id)) + 1 : 1
     }])
   }
 
@@ -48,9 +42,9 @@ import { LeftPanel } from './layots/LeftPanel/LeftPanel'
         <Header/>
         <JournalAddButton/>
         <JounalList>
-          {data.length === 0 
+          {mapItems(items).length === 0 
             ? <p>Записей нет, добавьте новую!</p> 
-            : data.sort(sortItems).map(el => (
+            : mapItems(items).sort(sortItems).map(el => (
             <CardButton key={el.id}>
               <JournalCard
                   title={el.title}
@@ -62,7 +56,7 @@ import { LeftPanel } from './layots/LeftPanel/LeftPanel'
         </JounalList>
       </LeftPanel>
       <Body>
-          <JournalForm onSubmit={addItems}/>
+          <JournalForm onSubmit={addItem}/>
       </Body>
     </div>
   )
