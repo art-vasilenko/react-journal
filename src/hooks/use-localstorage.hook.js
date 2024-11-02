@@ -9,7 +9,7 @@ export function useLocalStorage(key) {
         if(res) {
             setData(res)
         }
-    }, [])
+    }, [key])
 
     // Запись в LocalStorage
     const saveData = (newData) => {
@@ -17,6 +17,5 @@ export function useLocalStorage(key) {
         setData(newData)
     }
     
-
     return [data, saveData]
 }
