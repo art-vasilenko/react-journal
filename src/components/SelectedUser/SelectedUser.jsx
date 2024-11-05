@@ -9,7 +9,7 @@ export const SelectedUser = () => {
   }
 
   return (
-    <select name="user" id="user" value={userId} onChange={changeUser}>
+    <select className='select' name="user" id="user" value={userId} onChange={changeUser}>
       <option value="1">Вася</option>
       <option value="2">Артём</option>
     </select>

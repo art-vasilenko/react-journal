@@ -6,7 +6,7 @@ import { formReducer, INITIAL_STATE } from "./JournalForm.state"
 import { Input } from "../Input/Input"
 import { UserContext } from "../../context/user.context"
 
-export const JournalForm = ({ onSubmit }) => {
+export const JournalForm = ({ onSubmit, data, OnDelete }) => {
     const [formState, dispatchForm] = useReducer(formReducer, INITIAL_STATE)
     const { isValid, isFormReadyOnSubmit, values } = formState
     const titleRef = useRef()
@@ -29,6 +29,14 @@ export const JournalForm = ({ onSubmit }) => {
     }
 
     useEffect(() => {
+        if(!data) {
+            dispatchForm({ type: 'CLEAR' })
+            dispatchForm({ type: 'SET_VALUE', payload: { userId } })
+        }
+            dispatchForm({ type: 'SET_VALUE', payload: { ...data } })
+    }, [data, userId ])
+
+    useEffect(() => {
         let timerId;
         focusError(isValid)
         if (!isValid.date || !isValid.title || !isValid.post) {
@@ -45,30 +53,42 @@ export const JournalForm = ({ onSubmit }) => {
         if (isFormReadyOnSubmit) {
             onSubmit(values)
             dispatchForm({ type: 'CLEAR' })
+            dispatchForm({ type: 'SET_VALUE', payload: { userId } })
         }
-    }, [isFormReadyOnSubmit, values, onSubmit])
+    }, [isFormReadyOnSubmit, values, onSubmit, userId])
 
     const addJournalItem = (e) => {
         e.preventDefault()
         dispatchForm({ type: 'SUBMIT' })
     }
 
+    useEffect(() => {
+        dispatchForm({ type: 'SET_VALUE', payload: { userId } })
+    }, [userId])
+
     const onChange = (e) => {
         dispatchForm({ type: 'SET_VALUE', payload: { [e.target.name]: e.target.value } })
+    }
+    const deleteJournalItem = () => {
+        OnDelete(data.id)
+        dispatchForm({ type: 'CLEAR' })
+        dispatchForm({ type: 'SET_VALUE', payload: { userId } })
     }
 
     return (
         <form className="journal-form" onSubmit={addJournalItem}>
-            {userId}
-            <div>
+            <div className="form-row">
                 <Input type="text" ref={titleRef} isValid={isValid.title} onChange={onChange} value={values.title} name="title" appearence='title' />
+                { data?.id && <button className="delete" type="button" onClick={deleteJournalItem }>
+                    <img src="/delete.svg" alt="delete" />
+                </button>}
             </div>
             <div className="form-row">
                 <label htmlFor="date" className='form-label'>
                     <img src="/calendar.svg" alt="Иконка календаря" />
                     <span>Дата</span>
                 </label>
-                <Input type="date" ref={dateRef} isValid={isValid.date} onChange={onChange} value={values.date} name="date" id="date" />
+                <Input type="date" ref={dateRef} isValid={isValid.date} onChange={onChange} value={values.date ?  new Date(values.date).toISOString().slice(0, 10) : ''} name="date" id="date" />
             </div>
             <div className="form-row">
                 <label htmlFor="tag" className='form-label'>

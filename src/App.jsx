@@ -1,15 +1,14 @@
 import './App.sass'
-import { CardButton } from './components/CarbButton/CardButton'
 import { Header } from './components/Header/Header'
 import { JournalAddButton } from './components/JournalAddButton/JournalAddButton'
-import { JournalCard } from './components/JournalCard/JournalCard'
 import { JournalForm } from './components/JournalForm/JournalForm'
 import { JounalList } from './components/JournalList/JounalList'
 import { Body } from './layots/Body/Body'
 import { LeftPanel } from './layots/LeftPanel/LeftPanel'
 import { useLocalStorage } from './hooks/use-localstorage.hook'
-import { UserContext } from './context/user.context'
+import {  UserContextProvider } from './context/user.context'
 import { useState } from 'react'
+
 
 function mapItems(items) {
   if(!items) {
@@ -21,48 +20,48 @@ function mapItems(items) {
   }))
 }
 
+
+
  export function App() {
   const [items, setItems] = useLocalStorage('data')
-  const [userId, setUserId] = useState(1)
+  const [selectedItem, setSelectedItem] = useState(null)
   
   const addItem = item => {
-    setItems([...mapItems(items), {
-      title: item.title,
-      text: item.post,
-      date: new Date(item.date),
-      id: mapItems(items).length > 0 ? Math.max(...mapItems(items).map(el => el.id)) + 1 : 1
-    }])
+    if(!item.id) {
+      setItems([...mapItems(items), {
+        ...item,
+        date: new Date(item.date),
+        id: mapItems(items).length > 0 ? Math.max(...mapItems(items).map(el => el.id)) + 1 : 1
+      }])
+    } else {
+      setItems([...mapItems(items).map(i => {
+        if(i.id === item.id) {
+          return {
+            ...item,
+          }
+        }
+        return i;
+      })])
+    }
   }
 
-  const sortItems = (a , b) => {
-    return b.date - a.date
+  const deleteItem = (id) => {
+    setItems([...items.filter(i  => i.id !== id)])
   }
 
   return (
-    <UserContext.Provider value={{ userId, setUserId}}>
+    <UserContextProvider>
       <div className='app'>
         <LeftPanel>
           <Header/>
-          <JournalAddButton/>
-          <JounalList>
-            {mapItems(items).length === 0 
-              ? <p>Записей нет, добавьте новую!</p> 
-              : mapItems(items).sort(sortItems).map(el => (
-              <CardButton key={el.id}>
-                <JournalCard
-                    title={el.title}
-                    date={el.date}
-                    text={el.text}
-                />
-            </CardButton>
-            ))}
-          </JounalList>
+          <JournalAddButton clearForm={() => setSelectedItem(null)}/>
+          <JounalList items={ mapItems(items) } setItem={setSelectedItem}/>
         </LeftPanel>
         <Body>
-            <JournalForm onSubmit={addItem}/>
+            <JournalForm onSubmit={addItem} data={selectedItem} OnDelete={deleteItem}/>
         </Body>
       </div>
-    </UserContext.Provider>
+    </UserContextProvider>
   )
 }
 
